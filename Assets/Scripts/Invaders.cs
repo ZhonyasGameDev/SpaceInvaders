@@ -5,20 +5,26 @@ using UnityEngine;
 public class Invaders : MonoBehaviour
 {
     public Invader[] gridElementPrefab;  // The prefab for the grid elements
+    public Proyectile missilePrefab;
     public int rows = 5;                  // Number of rows in the grid
     public int columns = 5;               // Number of columns in the grid
     public float cellSize = 1.0f;         // Size of each cell in the grid
     private Vector3 moveDirection = Vector2.right;
     public AnimationCurve speedMovement;
     public float speedMultiplier = 2f;
+    //How often missiles spawn
+    public float missileAttackRate = 1f;
     public int amountKilled { get; private set; }
 
     // Read-only property that calculates the total number of invaders
     public int TotalInvaders => rows * columns;
     public float PercentKilled => (float)amountKilled / TotalInvaders;
+    public int amountAlive => TotalInvaders - amountKilled;
 
     void Start()
     {
+        InvokeRepeating(nameof(MissileAttack), missileAttackRate, missileAttackRate);
+
         CreateGrid();
     }
 
@@ -88,6 +94,24 @@ public class Invaders : MonoBehaviour
         position.y -= 1f;
 
         transform.position = position;
+    }
+
+    private void MissileAttack()
+    {
+        //The probability of instantiating a missil - fewer live Invaders more probability
+        foreach (Transform invader in transform)
+        {
+            if (!invader.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+            if (Random.value < (1.0f / amountAlive))
+            {
+                Instantiate(missilePrefab, invader.position, Quaternion.identity);
+                //Prevents only one missile from being instantiated at a time
+                break;
+            }
+        }
     }
 
     private void InvaderKilled()

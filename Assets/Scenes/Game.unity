@@ -250,6 +250,7 @@ MonoBehaviour:
   - {fileID: 5538783999645220111, guid: 9eb849502c1b8804ea19f93bcd2a48c1, type: 3}
   - {fileID: 5538783999645220111, guid: 9eb849502c1b8804ea19f93bcd2a48c1, type: 3}
   - {fileID: 1700781296368908289, guid: 00577da6a0e59a543b94136b5d538096, type: 3}
+  missilePrefab: {fileID: 3596265379492355350, guid: f74ce2c307522f845bbaa7352a8e4a1f, type: 3}
   rows: 5
   columns: 11
   cellSize: 2
@@ -277,7 +278,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  speedMultiplier: 3.5
+  speedMultiplier: 3
+  missileAttackRate: 1
 --- !u!1 &397516677
 GameObject:
   m_ObjectHideFlags: 0
@@ -1110,7 +1112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8baa753c87651214eaeaa5ce1ad1b2c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
+  moveSpeed: 7.5
   laserPrefab: {fileID: -8512108321152106647, guid: f17005b21bf8fd645bde53c6830721d5, type: 3}
 --- !u!1 &1372382055
 GameObject:
