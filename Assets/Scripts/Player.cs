@@ -4,12 +4,10 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
     public Proyectile laserPrefab;
-
     private bool laserActive;
 
     private void Update()
     {
-
         //Handle movement
         Vector3 horizontalMovement;
         float InputX = Input.GetAxis("Horizontal");
@@ -23,12 +21,10 @@ public class Player : MonoBehaviour
             Shoot();
         }
 
-
     }
 
     private void Shoot()
     {
-
         if (!laserActive)
         {
             Proyectile proyectile = Instantiate(laserPrefab, transform.position, Quaternion.identity);

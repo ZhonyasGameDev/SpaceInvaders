@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Invaders : MonoBehaviour
@@ -9,9 +8,14 @@ public class Invaders : MonoBehaviour
     public int rows = 5;                  // Number of rows in the grid
     public int columns = 5;               // Number of columns in the grid
     public float cellSize = 1.0f;         // Size of each cell in the grid
-
     private Vector3 moveDirection = Vector2.right;
-    [SerializeField] private float speedMovement;
+    public AnimationCurve speedMovement;
+    public float speedMultiplier = 2f;
+    public int amountKilled { get; private set; }
+
+    // Read-only property that calculates the total number of invaders
+    public int TotalInvaders => rows * columns;
+    public float PercentKilled => (float)amountKilled / TotalInvaders;
 
     void Start()
     {
@@ -25,7 +29,7 @@ public class Invaders : MonoBehaviour
         float gridHeight = rows * cellSize;
 
         // Calculate the starting position of the grid to center it
-        Vector3 startPosition = new Vector3(-gridWidth / 2 + cellSize / 2, -gridHeight / 2 + cellSize / 2, 0);
+        Vector3 startPosition = new Vector3(-gridWidth / 2 + cellSize / 2, -gridHeight / 2 + cellSize / 2, 0f);
         // Debug.Log(startPosition);
 
         for (int row = 0; row < rows; row++)
@@ -36,8 +40,10 @@ public class Invaders : MonoBehaviour
                 Vector3 position = startPosition + new Vector3(column * cellSize, row * cellSize, 0);
 
                 // Instantiate the grid element at the calculated position
-                // Instantiate(gridElementPrefab, position, Quaternion.identity);
                 Invader invader = Instantiate(gridElementPrefab[row], transform);
+
+                invader.killed += InvaderKilled;
+
                 invader.transform.localPosition = position;
             }
         }
@@ -46,18 +52,16 @@ public class Invaders : MonoBehaviour
     private void Update()
     {
         //Move the Invaders
-        transform.position += speedMovement * Time.deltaTime * moveDirection;
+        transform.position += speedMovement.Evaluate(PercentKilled) * Time.deltaTime * moveDirection * speedMultiplier;
 
         //Get the right and left edges of the camera view
         Vector3 leftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);
         Vector3 rightEdge = Camera.main.ViewportToWorldPoint(Vector3.right);
 
-        // Debug.Log(rightEdge);
-
         float offsetX = 1.0f;
 
         foreach (Transform invader in this.transform)
-        {   
+        {
             //IF the current current Invader is not active in the Hierarchy continue with the next one...
             if (!invader.gameObject.activeInHierarchy)
             {
@@ -77,13 +81,18 @@ public class Invaders : MonoBehaviour
 
     private void AdvanceRow()
     {
-        // Reverse the direction of the movement and move the Invaders one row down
+        //Reverse the direction of the movement and move the Invaders one row down
         moveDirection.x *= -1f;
 
         Vector3 position = transform.position;
         position.y -= 1f;
 
         transform.position = position;
+    }
+
+    private void InvaderKilled()
+    {
+        amountKilled++;
     }
 
 }

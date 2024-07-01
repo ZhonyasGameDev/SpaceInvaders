@@ -1,13 +1,14 @@
+using System;
 using UnityEngine;
 
 public class Invader : MonoBehaviour
 {
+    public Action killed;
     public Sprite[] animationSprites;
     public float animationTime;
-
-    private SpriteRenderer spriteRenderer;
-
     private int animationFrame;
+    private SpriteRenderer spriteRenderer;
+    private const string PROYECTILE_LAYER_NAME = "Laser";
 
     private void Awake()
     {
@@ -29,6 +30,16 @@ public class Invader : MonoBehaviour
         }
 
         spriteRenderer.sprite = this.animationSprites[animationFrame];
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        //When a projectile contacts an invader 
+        if (other.gameObject.layer == LayerMask.NameToLayer(PROYECTILE_LAYER_NAME))
+        {
+            killed?.Invoke();
+            gameObject.SetActive(false);
+        }
     }
 
 }

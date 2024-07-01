@@ -5,7 +5,6 @@ public class Proyectile : MonoBehaviour
 {
     [SerializeField] private float proyectileSpeed;
     [SerializeField] private Vector3 direction;
-
     public Action destroyed;
 
     private void Update()
