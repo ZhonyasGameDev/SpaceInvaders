@@ -4,28 +4,40 @@ using UnityEngine;
 
 public class Invaders : MonoBehaviour
 {
-    public Invader[] gridElementPrefab;  // The prefab for the grid elements
-    public Proyectile missilePrefab;
-    public int rows = 5;                  // Number of rows in the grid
-    public int columns = 5;               // Number of columns in the grid
+    [Header("Grid")]
+    public int rows = 5;
+    public int columns = 5;
     public float cellSize = 1.0f;         // Size of each cell in the grid
-    private Vector3 moveDirection = Vector2.right;
-    public AnimationCurve speedMovement;
-    public float speedMultiplier = 2f;
-    //How often missiles spawn
-    public float missileAttackRate = 1f;
-    public int amountKilled { get; private set; }
 
-    // Read-only property that calculates the total number of invaders
-    public int TotalInvaders => rows * columns;
-    public float PercentKilled => (float)amountKilled / TotalInvaders;
-    public int amountAlive => TotalInvaders - amountKilled;
+    [Header("Invaders")]
+    public Invader[] gridElementPrefab = new Invader[5];  // The prefab for the grid elements
+    public AnimationCurve speedMovement;
+
+    private Vector3 moveDirection = Vector2.right;
+    private Vector3 initialPosition;
+    public float speedMultiplier = 2f;
+
+    [Header("Missiles")]
+    public Projectile missilePrefab;
+    public float missileSpawnRate = 1f;
+
+    // public int amountKilled { get; private set; }
+
+    /*  // Read-only property that calculates the total number of invaders
+     public int TotalInvaders => rows * columns;
+     public float PercentKilled => (float)amountKilled / TotalInvaders;
+     public int amountAlive => TotalInvaders - amountKilled; */
+
+    private void Awake()
+    {
+        initialPosition = transform.position;
+
+        CreateGrid();
+    }
 
     void Start()
     {
-        InvokeRepeating(nameof(MissileAttack), missileAttackRate, missileAttackRate);
-
-        CreateGrid();
+        InvokeRepeating(nameof(MissileAttack), missileSpawnRate, missileSpawnRate);
     }
 
     void CreateGrid()
@@ -48,7 +60,7 @@ public class Invaders : MonoBehaviour
                 // Instantiate the grid element at the calculated position
                 Invader invader = Instantiate(gridElementPrefab[row], transform);
 
-                invader.killed += InvaderKilled;
+                // invader.killed += InvaderKilled;
 
                 invader.transform.localPosition = position;
             }
@@ -57,30 +69,42 @@ public class Invaders : MonoBehaviour
 
     private void Update()
     {
-        //Move the Invaders
-        transform.position += speedMovement.Evaluate(PercentKilled) * Time.deltaTime * moveDirection * speedMultiplier;
+        //Calculate the percentage of invaders killed
+        int totalCount = rows * columns;
+        int amountAlive = GetAliveCount();
+        int amountKilled = totalCount - amountAlive;
+        float percentKilled = amountKilled / (float)totalCount;
 
-        //Get the right and left edges of the camera view
+        // Evaluate the speed of the invaders based on how many have been killed
+        float speed = speedMovement.Evaluate(percentKilled);
+        // transform.position += speed * Time.deltaTime * moveDirection;
+        transform.position += speed * speedMultiplier * Time.deltaTime * moveDirection;
+
+        // Transform the viewport to world coordinates so we can check when the invaders reach the edge of the screen
         Vector3 leftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);
         Vector3 rightEdge = Camera.main.ViewportToWorldPoint(Vector3.right);
 
         float offsetX = 1.0f;
 
+        // The invaders will advance to the next row after reaching the edge of the screen
         foreach (Transform invader in this.transform)
         {
-            //IF the current current Invader is not active in the Hierarchy continue with the next one...
+            // Skip any invaders that have been killed
             if (!invader.gameObject.activeInHierarchy)
             {
                 continue;
             }
+
             //Check if the current invader is moving to the right or left AND if has reached the edge of the screen
             if (moveDirection == Vector3.right && invader.position.x >= (rightEdge.x - offsetX))
             {
                 AdvanceRow();
+                break;
             }
             else if (moveDirection == Vector3.left && invader.position.x <= (leftEdge.x + offsetX))
             {
                 AdvanceRow();
+                break;
             }
         }
     }
@@ -98,13 +122,23 @@ public class Invaders : MonoBehaviour
 
     private void MissileAttack()
     {
-        //The probability of instantiating a missil - fewer live Invaders more probability
+        int amountAlive = GetAliveCount();
+
+        // No missiles should spawn when no invaders are alive
+        if (amountAlive == 0)
+        {
+            return;
+        }
+
         foreach (Transform invader in transform)
         {
+            // Any invaders that are killed cannot shoot missiles
             if (!invader.gameObject.activeInHierarchy)
             {
                 continue;
             }
+
+            //The probability of instantiating a missil - fewer live Invaders more probability
             if (Random.value < (1.0f / amountAlive))
             {
                 Instantiate(missilePrefab, invader.position, Quaternion.identity);
@@ -114,9 +148,36 @@ public class Invaders : MonoBehaviour
         }
     }
 
-    private void InvaderKilled()
+    //Called in GameManager
+    public void ResetInvaders()
     {
-        amountKilled++;
+        moveDirection = Vector3.right;
+        transform.position = initialPosition;
+
+        foreach (Transform invader in transform)
+        {
+            invader.gameObject.SetActive(true);
+        }
     }
+
+    public int GetAliveCount()
+    {
+        int count = 0;
+
+        foreach (Transform invader in transform)
+        {
+            if (invader.gameObject.activeSelf)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /*  private void InvaderKilled()
+     {
+         amountKilled++;
+     } */
 
 }

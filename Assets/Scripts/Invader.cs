@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class Invader : MonoBehaviour
 {
-    public Action killed;
+    // public Action killed;
     public Sprite[] animationSprites;
+    public int score = 10;
     public float animationTime;
     private int animationFrame;
     private SpriteRenderer spriteRenderer;
@@ -37,8 +38,13 @@ public class Invader : MonoBehaviour
         //When a projectile contacts an invader 
         if (other.gameObject.layer == LayerMask.NameToLayer(PROYECTILE_LAYER_NAME))
         {
-            killed?.Invoke();
-            gameObject.SetActive(false);
+            // killed?.Invoke();
+            // gameObject.SetActive(false);
+            GameManager.Instance.OnInvaderKilled(this);
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("Boundary"))
+        {
+            GameManager.Instance.OnBoundaryReached();
         }
     }
 

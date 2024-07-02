@@ -3,11 +3,23 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
-    public Proyectile laserPrefab;
-    private bool laserActive;
+    public Projectile laserPrefab;
+    private Projectile laser;
+
+    // private bool laserActive;
 
     private void Update()
     {
+        Vector3 position = transform.position;
+
+        // Clamp the position of the character so they do not go out of bounds
+        Vector3 leftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);
+        Vector3 rightEdge = Camera.main.ViewportToWorldPoint(Vector3.right);
+        position.x = Mathf.Clamp(position.x, leftEdge.x, rightEdge.x);
+
+        // Set the new position
+        transform.position = position;
+
         //Handle movement
         Vector3 horizontalMovement;
         float InputX = Input.GetAxis("Horizontal");
@@ -15,31 +27,24 @@ public class Player : MonoBehaviour
 
         transform.position += moveSpeed * Time.deltaTime * horizontalMovement;
 
-        //Shooting...
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        // Only one laser can be active at a given time so first check that
+        // there is not already an active laser
+        if (laser == null && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
-            Shoot();
+            laser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
         }
 
     }
 
-    private void Shoot()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!laserActive)
+        if (other.gameObject.layer == LayerMask.NameToLayer("Missile") ||
+            other.gameObject.layer == LayerMask.NameToLayer("Invader"))
         {
-            Proyectile proyectile = Instantiate(laserPrefab, transform.position, Quaternion.identity);
-            proyectile.destroyed += LaserDestroyed;
-            
-            laserActive = true;
+            GameManager.Instance.OnPlayerKilled(this);
         }
-
-
     }
 
-    private void LaserDestroyed()
-    {
-        laserActive = false;
-    }
 
 
 }
