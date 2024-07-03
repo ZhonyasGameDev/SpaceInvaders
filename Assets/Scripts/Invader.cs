@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Invader : MonoBehaviour
 {
-    // public Action killed;
+    // public Action OnInvaderKilled;
+    // public EventHandler OnInvaderKilled;
     public Sprite[] animationSprites;
     public int score = 10;
     public float animationTime;
@@ -38,7 +40,7 @@ public class Invader : MonoBehaviour
         //When a projectile contacts an invader 
         if (other.gameObject.layer == LayerMask.NameToLayer(PROYECTILE_LAYER_NAME))
         {
-            // killed?.Invoke();
+            // OnInvaderKilled?.Invoke(this, EventArgs.Empty);
             // gameObject.SetActive(false);
             GameManager.Instance.OnInvaderKilled(this);
         }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ public sealed class GameManager : MonoBehaviour
     private Invaders invaders;
     private MysteryShip mysteryShip;
     private Bunker[] bunkers;
+
+    public Action OnInvaderKilledEvent;
+    public Action OnPlayerKilledEvent;
 
     private int score;
     private int lives;
@@ -105,6 +109,8 @@ public sealed class GameManager : MonoBehaviour
 
         player.gameObject.SetActive(false);
 
+        OnPlayerKilledEvent?.Invoke();
+
         if (lives > 0)
         {
             Invoke(nameof(NewRound), 1f);
@@ -118,8 +124,9 @@ public sealed class GameManager : MonoBehaviour
     public void OnInvaderKilled(Invader invader)
     {
         invader.gameObject.SetActive(false);
-
         SetScore(score + invader.score);
+
+        OnInvaderKilledEvent?.Invoke();
 
         if (invaders.GetAliveCount() == 0)
         {
@@ -137,7 +144,7 @@ public sealed class GameManager : MonoBehaviour
         if (invaders.gameObject.activeSelf)
         {
             invaders.gameObject.SetActive(false);
-
+            
             OnPlayerKilled(player);
         }
     }

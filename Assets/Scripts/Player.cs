@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -5,6 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float moveSpeed;
     public Projectile laserPrefab;
     private Projectile laser;
+    public Action OnShooting;
 
     // private bool laserActive;
 
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
         if (laser == null && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             laser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+            OnShooting?.Invoke();
         }
 
     }

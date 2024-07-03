@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -11,6 +12,8 @@ public class MysteryShip : MonoBehaviour
     private Vector2 rightDestination;
     private int direction = -1;
     private bool spawned;
+
+    public Action<bool> OnSpawn;
 
     private void Start()
     {
@@ -68,11 +71,19 @@ public class MysteryShip : MonoBehaviour
         }
 
         spawned = true;
+
+        //Invoke the spawn sound
+        OnSpawn?.Invoke(spawned);
+
     }
 
     private void Despawn()
     {
         spawned = false;
+
+        //Invoke 
+        OnSpawn?.Invoke(spawned);
+        
 
         if (direction == 1) {
             transform.position = rightDestination;
