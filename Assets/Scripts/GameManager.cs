@@ -17,6 +17,8 @@ public sealed class GameManager : MonoBehaviour
 
     public Action OnInvaderKilledEvent;
     public Action OnPlayerKilledEvent;
+    // public Action<bool> OnGameOver;
+    private bool gameOver;
 
     private int score;
     private int lives;
@@ -49,15 +51,19 @@ public sealed class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (lives <= 0 && Input.GetKeyDown(KeyCode.Return))
+        if (lives <= 0 && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
         {
             NewGame();
+            mysteryShip.Despawn();
         }
     }
 
     private void NewGame()
     {
         gameOverUI.SetActive(false);
+
+        gameOver = false;
+        // mysteryShip.Despawn();
 
         SetScore(0);
         SetLives(3);
@@ -87,6 +93,8 @@ public sealed class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        gameOver = true;
+
         gameOverUI.SetActive(true);
         invaders.gameObject.SetActive(false);
     }
@@ -136,7 +144,7 @@ public sealed class GameManager : MonoBehaviour
 
     public void OnMysteryShipKilled(MysteryShip mysteryShip)
     {
-        SetScore(score + mysteryShip.score);
+        SetScore(score + mysteryShip.Score);
     }
 
     public void OnBoundaryReached()
@@ -144,9 +152,14 @@ public sealed class GameManager : MonoBehaviour
         if (invaders.gameObject.activeSelf)
         {
             invaders.gameObject.SetActive(false);
-            
+
             OnPlayerKilled(player);
         }
+    }
+
+    public bool GetGameOverValue()
+    {
+        return gameOver;
     }
 
 }

@@ -9,28 +9,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClipRefsSO audioClipRefsSO;
     [SerializeField] private Player player;
     [SerializeField] private MysteryShip mysteryShip;
-
-    public AudioSource musicSource;
-    public AudioSource sfxSource;
-
+    public AudioSource audioSource;
+    public AudioSource mysteryShipSFX;
     public AudioClip backgroundMusic;
-    // public List<AudioClip> soundEffects;
-
-
-    /*  private void Awake()
-     {
-         // Singleton pattern to ensure only one instance of AudioManager exists
-         if (instance == null)
-         {
-             instance = this;
-             DontDestroyOnLoad(gameObject);
-         }
-         else
-         {
-             Destroy(gameObject);
-         }
-     }
-  */
     private void Start()
     {
         PlayMusic(backgroundMusic);
@@ -41,39 +22,23 @@ public class AudioManager : MonoBehaviour
         mysteryShip.OnSpawn += MysteryShip_OnSpawn;
     }
 
-    // Play background music
     public void PlayMusic(AudioClip clip)
     {
-        musicSource.clip = clip;
-        musicSource.loop = true;
-        musicSource.Play();
+        audioSource.clip = clip;
+        audioSource.loop = true;
+        audioSource.Play();
     }
-    public void PlayMysteryShipSFX(AudioClip clip)
-    {
-        sfxSource.clip = clip;
-        sfxSource.loop = true;
-        sfxSource.Play();
-    }
-
     // Play a sound effect
     public void PlaySFX(AudioClip clip)
     {
-        sfxSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(clip);
     }
-
-    // Play a sound effect by name
-    /*  public void PlaySFX(string name)
-     {
-         AudioClip clip = soundEffects.Find(x => x.name == name);
-         if (clip != null)
-         {
-             PlaySFX(clip);
-         }
-         else
-         {
-             Debug.LogWarning("Sound effect not found: " + name);
-         }
-     } */
+    public void PlayMysteryShipSFX(AudioClip clip)
+    {
+        mysteryShipSFX.clip = clip;
+        mysteryShipSFX.loop = true;
+        mysteryShipSFX.Play();
+    }
 
     private void Player_OnShooting()
     {
@@ -86,6 +51,7 @@ public class AudioManager : MonoBehaviour
     private void GameManager_OnPlayerKilled()
     {
         PlaySFX(audioClipRefsSO.PLAYER_EXPLOSION);
+        // StopSound(audioSource);
     }
     private void MysteryShip_OnSpawn(bool spawned)
     {
@@ -96,7 +62,7 @@ public class AudioManager : MonoBehaviour
         else
         {
             // StopSFX();
-            StopSound(sfxSource);
+            StopSound(mysteryShipSFX);
         }
     }
 
@@ -108,9 +74,9 @@ public class AudioManager : MonoBehaviour
         // audioSource.Pause();
     }
 
-  /*   public void StopSFX()
-    {
-        sfxSource.Stop();
-    } */
+    /*   public void StopSFX()
+      {
+          sfxSource.Stop();
+      } */
 
 }
