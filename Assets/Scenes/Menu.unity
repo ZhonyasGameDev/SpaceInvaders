@@ -1072,7 +1072,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 600, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
@@ -1092,13 +1092,13 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -2292,6 +2292,7 @@ MonoBehaviour:
   - {fileID: 1445484359}
   audioSource: {fileID: 522455591}
   navigationSound: {fileID: 8300000, guid: 9470d141c1cfe894ca7abaa79c55389b, type: 3}
+  errorSound: {fileID: 8300000, guid: 3a87602094f9f024b9416c39b339a386, type: 3}
   optionsMenu: {fileID: 1153438148}
   mainMenu: {fileID: 7289347}
 --- !u!1 &1445484357

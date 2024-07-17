@@ -10,6 +10,7 @@ public class MainMenuManager : MonoBehaviour
 
     public AudioSource audioSource;
     public AudioClip navigationSound;
+    public AudioClip errorSound;
 
     // private const string PLAY_BUTTON_NAME = "Play";
     private const string SCENE_TO_LOAD = "Game";
@@ -57,7 +58,7 @@ public class MainMenuManager : MonoBehaviour
     {
         currentIndex = (currentIndex + direction + menuButtons.Length) % menuButtons.Length;
         UpdateIndicator();
-        PlayNavigationSound();
+        PlaySound(navigationSound);
     }
 
     void UpdateIndicator()
@@ -76,20 +77,21 @@ public class MainMenuManager : MonoBehaviour
         switch (currentButton)
         {
             case MenuButton.Play:
-                Debug.Log("Interacted with: Play");
+                // Debug.Log("Interacted with: Play");
                 LoadScene(SCENE_TO_LOAD);
                 break;
 
             case MenuButton.Settings:
-                Debug.Log("Interacted with: Settings");
+                // Debug.Log("Interacted with: Settings");
                 // Handle Settings button interaction
                 OptionsMenu();
 
                 break;
 
             case MenuButton.Quit:
-                Debug.Log("Interacted with: Quit");
-                Application.Quit(); // Quit the application (for standalone builds)
+                // Debug.Log("Interacted with: Quit");
+                PlaySound(errorSound);
+                // Application.Quit(); // Quit the application (for standalone builds)
                 break;
 
             default:
@@ -113,11 +115,11 @@ public class MainMenuManager : MonoBehaviour
         // menuButtons[currentIndex].onClick.Invoke();
     }
 
-    private void PlayNavigationSound()
+    private void PlaySound(AudioClip audioClip)
     {
         if (audioSource != null && navigationSound != null)
         {
-            audioSource.PlayOneShot(navigationSound);
+            audioSource.PlayOneShot(audioClip);
         }
     }
 
@@ -140,7 +142,7 @@ public class MainMenuManager : MonoBehaviour
         isNavigate = true;
         optionsMenu.SetActive(false);
         mainMenu.SetActive(true);
-        PlayNavigationSound();
+        PlaySound(navigationSound);
 
     }
 
